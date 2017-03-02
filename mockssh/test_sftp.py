@@ -10,6 +10,7 @@ def files_equal(fname1, fname2):
             if f1.read() == f2.read():
                 return True
 
+
 def test_sftp_session(server):
     for uid in server.users:
         target_dir = tempfile.mkdtemp()
@@ -29,10 +30,8 @@ def test_sftp_session(server):
 
 @fixture(params=[("chmod", "/", 0o755),
                  ("chown", "/", 0, 0),
-                 ("listdir", "/"),
                  ("listdir_attr", "/"),
                  ("lstat", "/"),
-                 ("mkdir", "/tmp/foo"),
                  ("readlink", "/etc"),
                  ("remove", "/etc/passwd"),
                  ("rename", "/tmp/foo", "/tmp/bar"),

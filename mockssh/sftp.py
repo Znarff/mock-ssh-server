@@ -1,4 +1,5 @@
 import logging
+import operator
 import os
 
 from errno import EACCES, EDQUOT, EPERM, EROFS, ENOENT, ENOTDIR
@@ -9,7 +10,6 @@ import paramiko
 __all__ = [
     "SFTPServer",
 ]
-
 
 
 class SFTPHandle(paramiko.SFTPHandle):
@@ -85,6 +85,18 @@ class SFTPServerInterface(paramiko.SFTPServerInterface):
     def stat(self, path):
         st = os.stat(path)
         return paramiko.SFTPAttributes.from_stat(st, path)
+
+    @returns_sftp_error
+    def mkdir(self, path, attr):
+        os.mkdir(path, attr.st_mode)
+        return paramiko.SFTP_OK
+
+    @returns_sftp_error
+    def list_folder(self, path):
+        abspath = os.path.abspath(path)
+        content = [paramiko.SFTPAttributes.from_stat(entry.stat(), entry.path)
+                   for entry in os.scandir(abspath)]
+        return sorted(content, key=operator.attrgetter('filename'))
 
 
 class SFTPServer(paramiko.SFTPServer):
