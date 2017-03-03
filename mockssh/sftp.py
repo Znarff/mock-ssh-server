@@ -98,6 +98,16 @@ class SFTPServerInterface(paramiko.SFTPServerInterface):
                    for entry in os.scandir(abspath)]
         return sorted(content, key=operator.attrgetter('filename'))
 
+    @returns_sftp_error
+    def remove(self, path):
+        os.remove(path)
+        return paramiko.SFTP_OK
+
+    @returns_sftp_error
+    def rmdir(self, path):
+        os.rmdir(path)
+        return paramiko.SFTP_OK
+
 
 class SFTPServer(paramiko.SFTPServer):
 
