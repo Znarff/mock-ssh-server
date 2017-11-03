@@ -27,6 +27,13 @@ def test_sftp_session(server):
             sftp.get(target_fname, second_copy)
             assert files_equal(target_fname, second_copy)
 
+            dir_contents = sftp.listdir(target_dir)
+            assert len(dir_contents) == 2
+            assert "foo" in dir_contents
+            assert "bar" in dir_contents
+            with raises(IOError):
+                sftp.listdir("/123_no_dir")
+
 
 @fixture(params=[("chmod", "/", 0o755),
                  ("chown", "/", 0, 0),
