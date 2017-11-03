@@ -123,7 +123,10 @@ class Server(object):
             self.log.debug("Waiting for incoming connections ...")
             rlist, _, _ = select.select([sock], [], [], 1.0)
             if rlist:
-                conn, addr = sock.accept()
+                try:
+                    conn, addr = sock.accept()
+                except OSError:
+                    break
                 self.log.debug("... got connection %s from %s", conn, addr)
                 handler = Handler(self, (conn, addr))
                 t = threading.Thread(target=handler.run)
